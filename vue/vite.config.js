@@ -15,4 +15,15 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      // 所有以 /api 开头的请求都代理到后端服务
+      '/api': {
+        target: 'http://localhost:9099', // 你的 Spring Boot 后端服务地址
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '/api') // 保留 /api 前缀
+      }
+    }
+  }
+
 })

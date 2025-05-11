@@ -4,7 +4,6 @@ import com.tzs.antique.common.controller.BaseController;
 import com.tzs.antique.common.exception.GymException;
 import com.tzs.antique.common.reponse.GymResponse;
 import com.tzs.antique.common.utils.JWTUtil;
-import com.tzs.antique.common.utils.MD5Util;
 import com.tzs.antique.login.service.LoginService;
 import com.tzs.antique.system.entity.BaseUser;
 import com.tzs.antique.system.service.IBaseUserService;
@@ -36,7 +35,7 @@ public class LoginController extends BaseController {
             throw new GymException("请正确输入用户名/密码");
         }
         username = StringUtils.lowerCase(username);
-        password = MD5Util.encrypt(username,password);
+        //password = MD5Util.encrypt(username,password);
         BaseUser user = iBaseUserService.getUserByUserName(username);
         if(user == null || !user.getPassWord().equals(password)){
             throw new GymException("用户名/密码错误");

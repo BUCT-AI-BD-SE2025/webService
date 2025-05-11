@@ -40,6 +40,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'RegisterView',
   data() {
@@ -57,17 +59,33 @@ export default {
       this.error = false;
       this.validEmail = this.validateEmail(this.email);
 
-
       if (!this.username || !this.email || !this.password || this.password !== this.confirmPassword || !this.validEmail) {
         this.error = true;
         return;
       }
 
+      // 创建注册请求数据
+      const registerData = {
+        userName: this.username,
+        email: this.email,
+        passWord: this.password,
+        name: this.username // 这里可以根据需要修改，假设姓名为用户名
+      };
 
-      alert(`注册成功，${this.username}！`);
-
-
-      this.$router.push('/login');
+      // 发送注册请求
+      axios.post('/api/user/register', registerData)
+        .then(response => {
+          if (response.data === "注册成功") {
+            alert(`注册成功，${this.username}！`);
+            this.$router.push('/login');
+          } else {
+            alert(response.data); // 显示错误信息
+          }
+        })
+        .catch(error => {
+          console.error("注册失败", error);
+          alert("注册请求失败，请稍后再试");
+        });
     },
 
     validateEmail(email) {
@@ -79,19 +97,17 @@ export default {
 </script>
 
 <style scoped>
-
 .register-wrapper {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
- height: 100vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: #f5f5f5;
 }
-
 
 .register-container {
   width: 300px;

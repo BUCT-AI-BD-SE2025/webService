@@ -81,16 +81,18 @@ public class BaseUserServiceImpl extends ServiceImpl<BaseUserMapper, BaseUser> i
 
         user.setUpdateTime(LocalDateTime.now());
         if (!StringUtils.isEmpty(user.getPassWord())) {
-            String password = MD5Util.encrypt(user.getUserName(), user.getPassWord());
+            String password =  user.getPassWord();
             user.setPassWord(password);
         }
         user.setUserName(null);//用户名不可更改
         //保存用户修改
         baseUserMapper.updateById(user);
-        //删除原来角色关系
-        userRoleService.delUserRole(user.getId());
-        //保存新的角色关系
-        userRoleService.saveUserRole(user.getId(), user.getRoles());
+        if (user.getRoles() != null) {
+            //删除原来角色关系
+            userRoleService.delUserRole(user.getId());
+            //保存新的角色关系
+            userRoleService.saveUserRole(user.getId(), user.getRoles());
+        }
     }
 
     @Override
@@ -103,5 +105,9 @@ public class BaseUserServiceImpl extends ServiceImpl<BaseUserMapper, BaseUser> i
         LambdaQueryWrapper<BaseUser> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(BaseUser::getUserName, username);
         return baseUserMapper.selectOne(lambdaQueryWrapper) != null;
+    }
+    @Override
+    public BaseUser getUserByEmail(String email) {
+        return baseUserMapper.getUserByEmail(email);
     }
 }

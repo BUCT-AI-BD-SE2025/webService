@@ -20,6 +20,8 @@ public interface IBaseUserService extends IService<BaseUser> {
      */
     BaseUser getUserByUserName(String userName);
 
+    BaseUser getUserByEmail(String email);
+
     /***
      *  查询用户角色
      * @param userName

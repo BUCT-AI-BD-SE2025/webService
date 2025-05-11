@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
@@ -41,7 +43,7 @@ export default {
     }
   },
   methods: {
-    submit() {
+    async submit() {
       this.errorMessage = ''
       this.successMessage = ''
 
@@ -60,12 +62,24 @@ export default {
         return
       }
 
-      this.successMessage = '密码修改成功，即将返回...'
+      try {
+        const response = await axios.post('/api/user/change-password', {
+          oldPassword: this.oldPassword,
+          newPassword: this.newPassword
+        })
 
-
-      setTimeout(() => {
-        this.$router.push({ name: 'profile' })
-      }, 2000)
+        if (response.data.code === 200) {
+          this.successMessage = '密码修改成功，即将返回...'
+          setTimeout(() => {
+            this.$router.push({ name: 'profile' })
+          }, 2000)
+        } else {
+          this.errorMessage = response.data.msg || '密码修改失败'
+        }
+      } catch (error) {
+        this.errorMessage = '请求失败，请稍后再试'
+        console.error(error)
+      }
     },
     goBack() {
       this.$router.back()

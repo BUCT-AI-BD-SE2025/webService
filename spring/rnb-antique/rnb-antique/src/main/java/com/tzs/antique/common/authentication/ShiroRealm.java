@@ -52,7 +52,7 @@ public class ShiroRealm extends AuthorizingRealm {
         if(!JWTUtil.verify(token,username,baseUser.getPassWord()))
             throw new TokenTimeoutException("token不匹配");
         baseUser.setToken(token);
-        return new SimpleAuthenticationInfo(baseUser,token,"shiroRealm");
+        return new SimpleAuthenticationInfo(username,token,"shiroRealm");
     }
 
 

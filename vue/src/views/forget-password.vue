@@ -16,8 +16,9 @@
     </div>
   </div>
 </template>
-
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -33,7 +34,14 @@ export default {
         alert('请输入邮箱！');
         return;
       }
-      alert(`验证码已发送到 ${this.email}`);
+
+      axios.post('http://localhost:9099/forget/code', {
+        email: this.email
+      }).then(res => {
+        alert(res.data.message || '验证码已发送，请查收');
+      }).catch(err => {
+        alert(err.response?.data?.message || '验证码发送失败，请重试');
+      });
     },
     resetPassword() {
       if (!this.code || !this.newPassword || !this.confirmPassword) {
@@ -44,10 +52,19 @@ export default {
         alert('两次密码输入不一致！');
         return;
       }
-      alert('密码重置成功，请返回登录');
-      this.$router.push('/login');
-    },
-  },
+
+      axios.post('http://localhost:9099/forget/reset', {
+        email: this.email,
+        code: this.code,
+        password: this.newPassword
+      }).then(res => {
+        alert(res.data.message || '密码重置成功，请返回登录');
+        this.$router.push('/login');
+      }).catch(err => {
+        alert(err.response?.data?.message || '重置失败，请重试');
+      });
+    }
+  }
 };
 </script>
 
