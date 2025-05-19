@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tzs.antique.web.dao.AntiqueInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.tzs.antique.web.entity.AntiqueInfo">
+        <id column="id" property="id"/>
+        <result column="name_cn" property="nameCn"/>
+        <result column="name_en" property="nameEn"/>
+        <result column="era" property="era"/>
+        <result column="min_age" property="minAge"/>
+        <result column="max_age" property="maxAge"/>
+        <result column="type" property="type"/>
+        <result column="material" property="material"/>
+        <result column="artist" property="artist"/>
+        <result column="tag" property="tag"/>
+        <result column="details" property="details"/>
+        <result column="remark" property="remark"/>
+        <result column="status" property="status"/>
+        <result column="del_flag" property="delFlag"/>
+        <result column="museum" property="museum"/>
+        <result column="from_url" property="fromUrl"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name_cn, name_en, era, min_age, max_age, type, material, artist, tag, details, remark, status, del_flag,
+        museum, from_url
+    </sql>
+    <select id="museumByGroup" resultType="map">
+        SELECT museum,count(1) ct FROM antique_info WHERE museum IS NOT NULL GROUP BY museum
+    </select>
+
+    <select id="eraByGroup" resultType="map">
+        SELECT era,count(1) ct FROM antique_info WHERE era IS NOT NULL GROUP BY era
+    </select>
+
+</mapper>

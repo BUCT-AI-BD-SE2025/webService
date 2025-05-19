@@ -2,7 +2,7 @@
   <div class="artifact-detail-page">
     <header class="header">
       <button @click="goBack">返回</button>
-      <h1>文物详情</h1>
+      <h1>文物详情</h1>，
     </header>
 
     <main class="content" v-if="artifact">
@@ -15,13 +15,27 @@
       <h2>{{ artifact.name }}</h2>
       <p><strong>类型：</strong>{{ artifact.type }}</p>
       <p><strong>介绍：</strong>{{ artifact.description }}</p>
+
+      <!-- 推荐区域 -->
+      <section class="recommend-section" v-if="recommendedArtifacts.length > 0">
+        <h3>相似推荐</h3>
+        <div class="recommend-list">
+          <div
+            class="recommend-item"
+            v-for="item in recommendedArtifacts"
+            :key="item.id"
+            @click="goToDetail(item.id)"
+          >
+            <img :src="item.image || placeholder" alt="推荐图片" />
+            <p>{{ item.name }}</p>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <div v-else class="loading">
-      正在加载文物信息...
-    </div>
+    <div v-else class="loading">正在加载文物信息...</div>
 
-
+    <!-- 大图预览 -->
     <div v-if="showImageViewer" class="image-viewer" @click="closeImageViewer">
       <img :src="artifact.image || placeholder" alt="文物大图" class="large-image" />
     </div>
@@ -29,7 +43,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -37,8 +51,10 @@ const router = useRouter()
 
 const artifact = ref(null)
 const showImageViewer = ref(false)
+const recommendedArtifacts = ref([])
 
-const placeholder = 'https://via.placeholder.com/300x300?text=暂无图片'
+
+const placeholder = ''
 
 const allArtifacts = [
   { id: 1, name: '青铜鼎', type: '青铜器', description: '青铜时代的器物', image: '' },
@@ -50,13 +66,28 @@ const allArtifacts = [
   { id: 7, name: '青花瓷瓶', type: '陶瓷', description: '元代青花瓷', image: '' }
 ]
 
-onMounted(() => {
+const loadArtifact = () => {
   const id = parseInt(route.query.id)
   artifact.value = allArtifacts.find(item => item.id === id)
-})
+
+  if (artifact.value) {
+    recommendedArtifacts.value = allArtifacts
+      .filter(item => item.type === artifact.value.type && item.id !== artifact.value.id)
+      .slice(0, 4)
+  } else {
+    recommendedArtifacts.value = []
+  }
+}
+
+onMounted(loadArtifact)
+watch(() => route.query.id, loadArtifact)
 
 function goBack() {
   router.back()
+}
+
+function goToDetail(id) {
+  router.push({ path: '/artifact-detail', query: { id } })
 }
 
 function openImageViewer() {
@@ -119,7 +150,6 @@ function closeImageViewer() {
   font-size: 18px;
 }
 
-/* 大图查看器样式 */
 .image-viewer {
   position: fixed;
   top: 0;
@@ -137,5 +167,47 @@ function closeImageViewer() {
   max-width: 90%;
   max-height: 90%;
   border-radius: 10px;
+}
+
+/* 推荐区域样式 */
+.recommend-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.recommend-section h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.recommend-list {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.recommend-item {
+  width: 150px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.recommend-item img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.recommend-item:hover {
+  transform: scale(1.05);
+}
+
+.recommend-item p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
 }
 </style>

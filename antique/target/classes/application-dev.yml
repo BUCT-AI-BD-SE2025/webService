@@ -1,0 +1,19 @@
+server:
+  port: 9099
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://8.219.254.96:3306/antique?useUnicode=true&characterEncoding=UTF-8&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=GMT%2b8&useOldAliasMetadataBehavior=true&allowMultiQueries=true
+    username: root
+    password: xin1127
+  redis:
+    host: 8.219.254.96
+    port: 6379
+    AUTH: xin1127
+    password: xin1127
+    database: 0
+
+file:
+  localPath: E:/antique/images
+lucene:
+  path: F:/antiques
